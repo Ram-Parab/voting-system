@@ -86,6 +86,7 @@ export default function ManageElections() {
           </CardHeader>
           <CardFooter>
             <Button variant="outline">Edit</Button>
+            <Button variant="outline">Delete</Button>
           </CardFooter>
         </Card>
       ))}
