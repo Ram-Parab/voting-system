@@ -15,6 +15,7 @@
     "@radix-ui/react-scroll-area": "^1.2.0",
     "@radix-ui/react-select": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.0",
+    "@truffle/contract": "^4.6.31",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -29,7 +30,8 @@
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "sonner": "^1.7.0",
     "tailwind-merge": "^2.5.4",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "web3": "^4.15.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -40,6 +42,7 @@
     "@types/node": "^20.17.6",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/web3": "^1.2.2",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "postcss": "^8",

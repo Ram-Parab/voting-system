@@ -1,12 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export default function VoterRegistration() {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     fullName: '',
     dateOfBirth: '',
@@ -16,15 +19,60 @@ export default function VoterRegistration() {
     phoneNumber: '',
     governmentId: '',
   })
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Form submitted:', formData)
-    // Here you would typically send the data to your backend
+    setLoading(true)
+    
+    try {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        toast.error('Please login first')
+        router.push('/voter-login')
+        return
+      }
+
+      console.log('Sending registration request with token:', token)
+      console.log('Form data:', formData)
+
+      const response = await fetch('http://localhost:5000/api/registration/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      })
+
+      console.log('Response status:', response.status)
+      const responseText = await response.text()
+      console.log('Response text:', responseText)
+
+      if (!response.ok) {
+        let errorMessage = 'Registration failed'
+        try {
+          const errorData = JSON.parse(responseText)
+          errorMessage = errorData.message || errorMessage
+        } catch (e) {
+          console.error('Error parsing error response:', e)
+        }
+        throw new Error(errorMessage)
+      }
+
+      const data = JSON.parse(responseText)
+      toast.success('Registration submitted successfully')
+      router.push('/voter/registration-status-pending')
+    } catch (error) {
+      console.error('Registration error:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to register')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -39,6 +87,7 @@ export default function VoterRegistration() {
             value={formData.fullName}
             onChange={handleChange}
             required
+            disabled={loading}
           />
         </div>
         <div>
@@ -50,11 +99,16 @@ export default function VoterRegistration() {
             value={formData.dateOfBirth}
             onChange={handleChange}
             required
+            disabled={loading}
           />
         </div>
         <div>
           <Label htmlFor="gender">Gender</Label>
-          <Select name="gender" onValueChange={(value) => setFormData({ ...formData, gender: value })}>
+          <Select 
+            name="gender" 
+            onValueChange={(value) => setFormData({ ...formData, gender: value })}
+            disabled={loading}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select gender" />
             </SelectTrigger>
@@ -73,6 +127,7 @@ export default function VoterRegistration() {
             value={formData.address}
             onChange={handleChange}
             required
+            disabled={loading}
           />
         </div>
         <div>
@@ -84,6 +139,7 @@ export default function VoterRegistration() {
             value={formData.email}
             onChange={handleChange}
             required
+            disabled={loading}
           />
         </div>
         <div>
@@ -95,6 +151,7 @@ export default function VoterRegistration() {
             value={formData.phoneNumber}
             onChange={handleChange}
             required
+            disabled={loading}
           />
         </div>
         <div>
@@ -105,19 +162,12 @@ export default function VoterRegistration() {
             value={formData.governmentId}
             onChange={handleChange}
             required
+            disabled={loading}
           />
         </div>
-        <div>
-          <Label htmlFor="photo">Photo</Label>
-          <Input
-            id="photo"
-            name="photo"
-            type="file"
-            accept="image/*"
-            required
-          />
-        </div>
-        <Button type="submit" className="w-full">Register</Button>
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? 'Registering...' : 'Register'}
+        </Button>
       </form>
     </div>
   )
