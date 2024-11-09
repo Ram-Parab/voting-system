@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 
-type ElectionStatus = 'live' | 'final' | 'pending'
+type ElectionStatus = 'ongoing' | 'completed' | 'upcoming'
 
 interface Candidate {
   name: string
@@ -26,7 +26,7 @@ const mockElections: Election[] = [
     id: 1,
     name: 'Presidential Election 2024',
     date: '2024-11-03',
-    status: 'live',
+    status: 'upcoming',
     results: [
       { name: 'John Doe', party: 'Democratic Party', votes: 15000000 },
       { name: 'Jane Smith', party: 'Republican Party', votes: 14500000 },
@@ -37,7 +37,7 @@ const mockElections: Election[] = [
     id: 2,
     name: 'Local Council Election',
     date: '2024-05-15',
-    status: 'final',
+    status: 'ongoing',
     results: [
       { name: 'Alice Brown', party: 'Progressive Party', votes: 50000 },
       { name: 'Charlie Davis', party: 'Conservative Party', votes: 48000 },
@@ -46,11 +46,11 @@ const mockElections: Election[] = [
   {
     id: 3,
     name: 'Referendum on Public Transport',
-    date: '2024-09-01',
-    status: 'pending',
+    date: '2023-09-01',
+    status: 'completed',
     results: [
-      { name: 'Yes', party: 'For', votes: 0 },
-      { name: 'No', party: 'Against', votes: 0 },
+      { name: 'Yes', party: 'For', votes: 75000 },
+      { name: 'No', party: 'Against', votes: 65000 },
     ],
   },
 ]
@@ -60,12 +60,12 @@ export default function VoterResults() {
 
   const getStatusBadge = (status: ElectionStatus) => {
     switch (status) {
-      case 'live':
-        return <Badge variant="default">Live</Badge>
-      case 'final':
-        return <Badge variant="secondary">Final</Badge>
-      case 'pending':
-        return <Badge variant="outline">Pending</Badge>
+      case 'ongoing':
+        return <Badge variant="default">Ongoing</Badge>
+      case 'completed':
+        return <Badge variant="secondary">Completed</Badge>
+      case 'upcoming':
+        return <Badge variant="outline">Upcoming</Badge>
     }
   }
 

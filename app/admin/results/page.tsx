@@ -4,12 +4,30 @@ import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 
-const mockElections = [
+type ElectionStatus = 'ongoing' | 'completed' | 'upcoming'
+
+interface Candidate {
+  name: string
+  party: string
+  votes: number
+}
+
+interface Election {
+  id: number
+  name: string
+  date: string
+  status: ElectionStatus
+  results: Candidate[]
+}
+
+const mockElections: Election[] = [
   {
     id: 1,
     name: 'Presidential Election 2024',
     date: '2024-11-03',
+    status: 'upcoming',
     results: [
       { name: 'John Doe', party: 'Democratic Party', votes: 15000000 },
       { name: 'Jane Smith', party: 'Republican Party', votes: 14500000 },
@@ -20,19 +38,41 @@ const mockElections = [
     id: 2,
     name: 'Local Council Election',
     date: '2024-05-15',
+    status: 'ongoing',
     results: [
       { name: 'Alice Brown', party: 'Progressive Party', votes: 50000 },
       { name: 'Charlie Davis', party: 'Conservative Party', votes: 48000 },
     ],
   },
+  {
+    id: 3,
+    name: 'Referendum on Public Transport',
+    date: '2023-09-01',
+    status: 'completed',
+    results: [
+      { name: 'Yes', party: 'For', votes: 75000 },
+      { name: 'No', party: 'Against', votes: 65000 },
+    ],
+  },
 ]
 
 export default function AdminResults() {
-  const [selectedElection, setSelectedElection] = useState(mockElections[0])
+  const [selectedElection, setSelectedElection] = useState<Election>(mockElections[0])
 
   const handleExport = () => {
     console.log('Exporting results for:', selectedElection.name)
     // Here you would implement the logic to export the results
+  }
+
+  const getStatusBadge = (status: ElectionStatus) => {
+    switch (status) {
+      case 'ongoing':
+        return <Badge variant="default">Ongoing</Badge>
+      case 'completed':
+        return <Badge variant="secondary">Completed</Badge>
+      case 'upcoming':
+        return <Badge variant="outline">Upcoming</Badge>
+    }
   }
 
   return (
@@ -58,7 +98,10 @@ export default function AdminResults() {
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>{selectedElection.name}</CardTitle>
+          <div className="flex justify-between items-center">
+            <CardTitle>{selectedElection.name}</CardTitle>
+            {getStatusBadge(selectedElection.status)}
+          </div>
           <CardDescription>Election Date: {selectedElection.date}</CardDescription>
         </CardHeader>
         <CardContent>

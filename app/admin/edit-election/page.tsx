@@ -9,80 +9,69 @@ import { Trash2, Plus } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface Candidate {
+  id: number
   name: string
   party: string
 }
 
-const mockElections = [
-  { id: 1, name: 'Presidential Election 2024', date: '2024-11-03', status: 'Upcoming' },
-  { id: 2, name: 'Local Council Election', date: '2024-05-15', status: 'Ongoing' },
-  { id: 3, name: 'Referendum on Public Transport', date: '2023-09-01', status: 'Completed' },
-]
+interface Election {
+  id: number
+  title: string
+  date: string
+  candidates: Candidate[]
+}
 
-export default function ManageElections() {
-  const [electionTitle, setElectionTitle] = useState('')
-  const [electionDate, setElectionDate] = useState('')
-  const [candidates, setCandidates] = useState<Candidate[]>([])
+// Mock data for an existing election
+const mockElection: Election = {
+  id: 1,
+  title: 'Presidential Election 2024',
+  date: '2024-11-03',
+  candidates: [
+    { id: 1, name: 'John Doe', party: 'Democratic Party' },
+    { id: 2, name: 'Jane Smith', party: 'Republican Party' },
+    { id: 3, name: 'Bob Johnson', party: 'Independent' },
+  ],
+}
+
+export default function EditElection() {
+  const [electionTitle, setElectionTitle] = useState(mockElection.title)
+  const [electionDate, setElectionDate] = useState(mockElection.date)
+  const [candidates, setCandidates] = useState<Candidate[]>(mockElection.candidates)
   const [newCandidateName, setNewCandidateName] = useState('')
   const [newCandidateParty, setNewCandidateParty] = useState('')
 
   const addCandidate = () => {
     if (newCandidateName && newCandidateParty) {
-      setCandidates([...candidates, { name: newCandidateName, party: newCandidateParty }])
+      const newCandidate: Candidate = {
+        id: Math.max(0, ...candidates.map(c => c.id)) + 1,
+        name: newCandidateName,
+        party: newCandidateParty,
+      }
+      setCandidates([...candidates, newCandidate])
       setNewCandidateName('')
       setNewCandidateParty('')
     }
   }
 
-  const removeCandidate = (index: number) => {
-    setCandidates(candidates.filter((_, i) => i !== index))
+  const removeCandidate = (id: number) => {
+    setCandidates(candidates.filter(candidate => candidate.id !== id))
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would typically send the data to your backend
-    console.log('Election created:', { electionTitle, electionDate, candidates })
-    // Reset form
-    setElectionTitle('')
-    setElectionDate('')
-    setCandidates([])
+    // Here you would typically send the updated data to your backend
+    console.log('Election updated:', { id: mockElection.id, electionTitle, electionDate, candidates })
+    // In a real application, you might redirect to the manage elections page after successful update
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Manage Elections</h1>
-
-      {/* Existing Elections Section */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Existing Elections</CardTitle>
-          <CardDescription>View and manage current elections</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {mockElections.map((election) => (
-              <div key={election.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div>
-                  <h3 className="font-semibold">{election.name}</h3>
-                  <p className="text-sm text-gray-500">Date: {election.date}</p>
-                  <p className="text-sm text-gray-500">Status: {election.status}</p>
-                </div>
-                <div className="space-x-2">
-                  <Button variant="outline">Edit</Button>
-                  <Button variant="destructive">Delete</Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Create New Election Section */}
+      <h1 className="text-3xl font-bold mb-6">Edit Election</h1>
       <Card>
         <form onSubmit={handleSubmit}>
           <CardHeader>
-            <CardTitle>Create New Election</CardTitle>
-            <CardDescription>Set up a new election and add candidates</CardDescription>
+            <CardTitle>Edit Election Details</CardTitle>
+            <CardDescription>Update the election information and candidates</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -132,15 +121,15 @@ export default function ManageElections() {
                   </tr>
                 </thead>
                 <tbody>
-                  {candidates.map((candidate, index) => (
-                    <tr key={index} className="border-t">
+                  {candidates.map((candidate) => (
+                    <tr key={candidate.id} className="border-t">
                       <td className="py-2">{candidate.name}</td>
                       <td>{candidate.party}</td>
                       <td className="text-right">
                         <Button
                           type="button"
                           variant="ghost"
-                          onClick={() => removeCandidate(index)}
+                          onClick={() => removeCandidate(candidate.id)}
                           className="h-8 w-8 p-0"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -153,7 +142,7 @@ export default function ManageElections() {
             </ScrollArea>
           </CardContent>
           <CardFooter>
-            <Button type="submit">Create Election</Button>
+            <Button type="submit">Update Election</Button>
           </CardFooter>
         </form>
       </Card>
