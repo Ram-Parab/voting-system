@@ -18,7 +18,7 @@ const mockVoters = [
     address: '123 Main St, Springfield',
     phoneNumber: '123-456-7890',
     governmentId: 'ID123456',
-    photo: '/path/to/photo1.jpg' // Assuming a placeholder path or URL for image
+    photo: '/path/to/photo1.jpg'
   },
   {
     id: 2,
@@ -61,6 +61,7 @@ const mockVoters = [
 export default function ManageVoters() {
   const [voters, setVoters] = useState(mockVoters)
   const [searchTerm, setSearchTerm] = useState('')
+  const [filter, setFilter] = useState('all')
   const [expandedVoterId, setExpandedVoterId] = useState<number | null>(null)
 
   const handleStatusChange = (voterId: number, newStatus: string) => {
@@ -73,21 +74,41 @@ export default function ManageVoters() {
     setExpandedVoterId(prevId => prevId === voterId ? null : voterId)
   }
 
-  const filteredVoters = voters.filter(voter => 
-    voter.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    voter.email.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredVoters = voters.filter(voter => {
+    const matchesSearchTerm =
+      voter.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      voter.email.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesFilter = filter === 'all' || voter.status.toLowerCase() === filter.toLowerCase()
+    return matchesSearchTerm && matchesFilter
+  })
 
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Manage Voters</h1>
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-4">
         <Input
           placeholder="Search voters..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="max-w-sm"
         />
+        <div className="flex items-center space-x-4">
+          <label htmlFor="filter">Filter by status:</label>
+          <Select
+            value={filter}
+            onValueChange={(value) => setFilter(value)}
+          >
+            <SelectTrigger id="filter">
+              <SelectValue placeholder="All" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="approved">Approved</SelectItem>
+              <SelectItem value="rejected">Rejected</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       <div className="grid gap-6">
         {filteredVoters.map((voter) => (
@@ -113,7 +134,6 @@ export default function ManageVoters() {
                   </SelectContent>
                 </Select>
               </div>
-              {/* Expanded voter details */}
               {expandedVoterId === voter.id && (
                 <div className="mt-4 p-4 border-t border-gray-200 max-h-40 overflow-y-auto">
                   <p><strong>Date of Birth:</strong> {voter.dateOfBirth}</p>
