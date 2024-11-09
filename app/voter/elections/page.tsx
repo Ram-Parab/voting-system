@@ -1,80 +1,88 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 const mockElections = [
   {
     id: 1,
-    name: 'Presidential Election 2024',
-    startDate: '2024-11-03',
-    endDate: '2024-11-03',
+    title: 'Presidential Election 2024',
+    description: 'Vote for the next president of the country',
     candidates: [
       { id: 1, name: 'John Doe', party: 'Democratic Party' },
       { id: 2, name: 'Jane Smith', party: 'Republican Party' },
       { id: 3, name: 'Bob Johnson', party: 'Independent' },
     ],
   },
-  {
-    id: 2,
-    name: 'Local Council Election',
-    startDate: '2024-05-15',
-    endDate: '2024-05-15',
-    candidates: [
-      { id: 4, name: 'Alice Brown', party: 'Progressive Party' },
-      { id: 5, name: 'Charlie Davis', party: 'Conservative Party' },
-    ],
-  },
+  // Add more mock elections as needed
 ]
 
-export default function Elections() {
-  const [votes, setVotes] = useState<Record<number, number>>({})
+export default function VoterElections() {
+  const [selectedCandidate, setSelectedCandidate] = useState<string | null>(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-  const handleVote = (electionId: number, candidateId: number) => {
-    setVotes({ ...votes, [electionId]: candidateId })
-  }
-
-  const handleSubmit = (electionId: number) => {
-    console.log(`Submitted vote for election ${electionId}: Candidate ${votes[electionId]}`)
+  const handleVoteSubmit = () => {
     // Here you would typically send the vote to your backend
+    console.log(`Vote submitted for candidate: ${selectedCandidate}`)
+    setIsDialogOpen(false)
+    // Reset selection after voting
+    setSelectedCandidate(null)
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Available Elections</h1>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">Current Elections</h1>
       {mockElections.map((election) => (
-        <Card key={election.id}>
+        <Card key={election.id} className="mb-6">
           <CardHeader>
-            <CardTitle>{election.name}</CardTitle>
-            <CardDescription>
-              {`Voting period: ${election.startDate} to ${election.endDate}`}
-            </CardDescription>
+            <CardTitle>{election.title}</CardTitle>
+            <CardDescription>{election.description}</CardDescription>
           </CardHeader>
           <CardContent>
-            <RadioGroup
-              onValueChange={(value) => handleVote(election.id, parseInt(value))}
-              value={votes[election.id]?.toString()}
-            >
+            <RadioGroup onValueChange={setSelectedCandidate} value={selectedCandidate || undefined}>
               {election.candidates.map((candidate) => (
                 <div key={candidate.id} className="flex items-center space-x-2">
                   <RadioGroupItem value={candidate.id.toString()} id={`candidate-${candidate.id}`} />
-                  <Label htmlFor={`candidate-${candidate.id}`}>
-                    {candidate.name} - {candidate.party}
-                  </Label>
+                  <Label htmlFor={`candidate-${candidate.id}`}>{candidate.name} - {candidate.party}</Label>
                 </div>
               ))}
             </RadioGroup>
           </CardContent>
           <CardFooter>
-            <Button
-              onClick={() => handleSubmit(election.id)}
-              disabled={!votes[election.id]}
-            >
-              Submit Vote
-            </Button>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button disabled={!selectedCandidate}>Submit Vote</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Confirm Your Vote</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to submit your vote? This action cannot be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                <p className="py-4">
+                  You are voting for: {selectedCandidate && 
+                    election.candidates.find(c => c.id.toString() === selectedCandidate)?.name
+                  }
+                </p>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+                  <Button onClick={handleVoteSubmit}>Confirm Vote</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </CardFooter>
         </Card>
       ))}
