@@ -42,7 +42,7 @@ export default function RegistrationStatus() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Registration Status</h1>
+      <h1 className="text-3xl font-bold mb-6">Track Registration Status</h1>
       <Card>
         <CardHeader>
           <CardTitle>Voter Registration Status</CardTitle>

@@ -27,7 +27,7 @@ export default function VoterLayout({
               </Link>
             </li>
             <li>
-              <Link href="/voter/track-status" className="block py-2 px-4 hover:bg-blue-700 rounded">
+              <Link href="/voter/registration-status-pending" className="block py-2 px-4 hover:bg-blue-700 rounded">
                 Track Status
               </Link>
             </li>
