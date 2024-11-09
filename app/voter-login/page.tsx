@@ -5,15 +5,40 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 export default function VoterLogin() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Login submitted:', { email, password })
-    // Here you would typically send the login request to your backend
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/voter-login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Something went wrong')
+      }
+
+      // Store token in localStorage
+      localStorage.setItem('token', data.token)
+      
+      toast.success('Login successful!')
+      router.push('/voter/register') // or wherever you want to redirect after login
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to login')
+    }
   }
 
   return (
