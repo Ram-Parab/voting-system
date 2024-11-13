@@ -18,12 +18,12 @@ import {
 const mockElections = [
   {
     id: 1,
-    title: 'Presidential Election 2024',
-    description: 'Vote for the next president of the country',
+    title: 'Maharashtra State Assembly Election 2024',
+    description: 'Vote for the next MLA of your constituency',
     candidates: [
-      { id: 1, name: 'John Doe', party: 'Democratic Party' },
-      { id: 2, name: 'Jane Smith', party: 'Republican Party' },
-      { id: 3, name: 'Bob Johnson', party: 'Independent' },
+      { id: 1, name: 'Devendra Fadnavis', party: 'BJP' },
+      { id: 2, name: 'Eknath Shinde', party: 'SS' },
+      { id: 3, name: 'Uddhav Thackrey', party: 'SS UBT' },
     ],
   },
   // Add more mock elections as needed

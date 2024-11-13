@@ -24,12 +24,12 @@ interface Election {
 // Mock data for an existing election
 const mockElection: Election = {
   id: 1,
-  title: 'Presidential Election 2024',
-  date: '2024-11-03',
+  title: 'Maharashtra State Assembly Election 2024',
+  date: '2024-11-20',
   candidates: [
-    { id: 1, name: 'John Doe', party: 'Democratic Party' },
-    { id: 2, name: 'Jane Smith', party: 'Republican Party' },
-    { id: 3, name: 'Bob Johnson', party: 'Independent' },
+    { id: 1, name: 'Devendra Fadnavis', party: 'BJP' },
+    { id: 2, name: 'Eknath Shinde', party: 'SS' },
+    { id: 3, name: 'Uddhav Thackrey', party: 'SS UBT' },
   ],
 }
 
